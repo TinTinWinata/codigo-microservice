@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUnownedPromoCodeRequestDto {
-    private String voucherId;
+    private Long voucherId;
     private int voucherCount;
     private String phoneNumber;
 }

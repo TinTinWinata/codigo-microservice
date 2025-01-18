@@ -1,10 +1,12 @@
 package com.codigo.microservices.voucher.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,20 +15,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 @Table(name = "purchase_histories")
 public class PurchaseHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
-    @Column(name = "user_phone", nullable = false)
+    @Column("user_phone")
     private String userPhone;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_id", nullable = false)
-    private Voucher voucher;
+    @Column("voucher_id")
+    private Long voucherId;
 
-    @Column(name = "purchase_date", nullable = false)
+    @Column("purchase_date")
     private LocalDateTime purchaseDate;
 }

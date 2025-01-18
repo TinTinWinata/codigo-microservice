@@ -11,7 +11,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class PromoCodeRoute {
     @Bean
     public RouterFunction<ServerResponse> purchaseRoutes(PromoCodeHandler handler){
-        return RouterFunctions.route(RequestPredicates.POST("/promo/take"), handler::getUnownedPromoCodes);
+        return RouterFunctions.route(RequestPredicates.POST("/internal/promo-code/take"), handler::getUnownedPromoCodes)
+                .andRoute(RequestPredicates.POST("/promo-code/status"), handler::updatePromoCodeStatus)
+                .andRoute(RequestPredicates.GET("/promo-code/status/{code}"), handler::getPromoCodeStatusByCode);
     }
 }
 

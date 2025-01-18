@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PurchaseRequestDto {
-    private String voucherId;
-    private String paymentMethodId;
+    private Long voucherId;
+    private Long paymentMethodId;
     private int quantity;
     private String paymentMetaId;
     private String phoneNumber;

@@ -1,10 +1,12 @@
 package com.codigo.microservices.voucher.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,24 +15,20 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "voucher_discounts")
 public class VoucherDiscount {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_id", nullable = false)
-    private Voucher voucher;
+    @Column("voucher_id")
+    private Long voucherId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method_id", nullable = false)
-    private PaymentMethod paymentMethod;
+    @Column("payment_method_id")
+    private Long paymentMethodId;
 
-    @Column(nullable = false)
+    @Column("discount")
     private BigDecimal discount;
 
-    @Column(nullable = false, name = "discount_description")
+    @Column("discount_description")
     private String discountDescription;
 }

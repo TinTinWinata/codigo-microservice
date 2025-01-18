@@ -2,15 +2,10 @@ package com.codigo.microservices.voucher.service;
 
 import com.codigo.microservices.voucher.dto.VoucherDiscountDto;
 import com.codigo.microservices.voucher.dto.VoucherDto;
-import com.codigo.microservices.voucher.entity.PaymentMethod;
 import com.codigo.microservices.voucher.entity.Voucher;
 import com.codigo.microservices.voucher.entity.VoucherDiscount;
-import com.codigo.microservices.voucher.enums.VoucherBuyType;
-import com.codigo.microservices.voucher.enums.VoucherStatus;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
 import com.codigo.microservices.voucher.mapper.VoucherMapper;
-import com.codigo.microservices.voucher.repository.PaymentMethodRepository;
-import com.codigo.microservices.voucher.repository.PurchaseHistoryRepository;
 import com.codigo.microservices.voucher.repository.VoucherDiscountRepository;
 import com.codigo.microservices.voucher.repository.VoucherRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,7 +33,7 @@ public class VoucherService {
     }
 
     public Flux<VoucherDto> getAllVouchers(){
-        return Flux.fromIterable(voucherRepository.findAll()).map(VoucherMapper::toDto);
+        return voucherRepository.findAll().map(VoucherMapper::toDto);
     }
 
     private void createVoucherEvent(Voucher voucher){
@@ -47,16 +43,39 @@ public class VoucherService {
         log.info("[Kafka Sent] - Voucher Event Sended {}.", voucher.getId());
     }
 
+
+    public Mono<VoucherDiscount> createVoucherDiscount(VoucherDiscountDto voucherDiscountDto) {
+        VoucherDiscount voucherDiscount = VoucherDiscount.builder()
+                .voucherId(voucherDiscountDto.getVoucherId())
+                .paymentMethodId(voucherDiscountDto.getPaymentMethodId())
+                .discount(voucherDiscountDto.getDiscount())
+                .discountDescription(voucherDiscountDto.getDiscountDescription())
+                .build();
+
+        return voucherDiscountRepository.save(voucherDiscount);
+    }
+
+    public Mono<VoucherDto> getVoucherByIdWithDiscount(Long voucherId){
+        Mono<Voucher> voucherMono = voucherRepository.findById(voucherId);
+        Flux<VoucherDiscount> discountFlux = voucherDiscountRepository.findByVoucherId(voucherId);
+        return voucherMono.zipWith(discountFlux.collectList())
+                .map(tuple -> {
+                    Voucher voucher = tuple.getT1();
+                    List<VoucherDiscount> discounts = tuple.getT2();
+                    return VoucherMapper.toDto(voucher, discounts);
+                });
+    }
+
     public Mono<Voucher> createVoucher(VoucherDto voucherDto){
         Voucher voucher = VoucherMapper.toEntity(voucherDto);
-        return Mono.just(voucherRepository.save(voucher));
+        return voucherRepository.save(voucher).doOnSuccess(this::createVoucherEvent);
     }
 
-    public Mono<Voucher> getVoucherById(UUID id){
-        return Mono.justOrEmpty(voucherRepository.findById(id));
+    public Mono<Voucher> getVoucherById(Long id){
+        return voucherRepository.findById(id);
     }
 
-    public Mono<Void> deleteVoucher(UUID id){
+    public Mono<Void> deleteVoucher(Long id){
         return getVoucherById(id)
                 .flatMap(voucher -> {
                     voucherRepository.delete(voucher);
@@ -64,7 +83,7 @@ public class VoucherService {
                 });
     }
 
-    public Mono<Voucher> updateVoucher(UUID id, VoucherDto voucherDto) {
+    public Mono<Voucher> updateVoucher(Long id, VoucherDto voucherDto) {
         return getVoucherById(id).flatMap(existingVoucher -> {
             existingVoucher.setTitle(voucherDto.getTitle());
             existingVoucher.setDescription(voucherDto.getDescription());
@@ -72,10 +91,8 @@ public class VoucherService {
             existingVoucher.setImageUrl(voucherDto.getImageUrl());
             existingVoucher.setAmount(voucherDto.getAmount());
             existingVoucher.setQuantity(voucherDto.getQuantity());
-            existingVoucher.setBuyType(VoucherBuyType.valueOf(voucherDto.getBuyType()));
             existingVoucher.setOwnerPhone(voucherDto.getOwnerPhone());
-            existingVoucher.setStatus(VoucherStatus.valueOf(voucherDto.getStatus()));
-            return Mono.just(voucherRepository.save(existingVoucher));
+            return voucherRepository.save(existingVoucher);
         });
     }
 }

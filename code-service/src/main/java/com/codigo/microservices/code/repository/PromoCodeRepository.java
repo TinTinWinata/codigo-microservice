@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PromoCodeRepository extends JpaRepository<PromoCode, String> {
     List<PromoCode> findByVoucherIdAndOwnerPhoneIsNull(String voucherId);
+    PromoCode findByCode(String code);
+    boolean existsByCode(String code);
 }

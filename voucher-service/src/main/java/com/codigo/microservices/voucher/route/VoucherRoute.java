@@ -16,6 +16,8 @@ public class VoucherRoute {
                 .andRoute(RequestPredicates.POST("/voucher/"), handler::createVoucher)
                 .andRoute(RequestPredicates.DELETE("/voucher/{id}"), handler::deleteVoucher)
                 .andRoute(RequestPredicates.PUT("/voucher/{id}"), handler::updateVoucher)
-                .andRoute(RequestPredicates.GET("/voucher/{id}"), handler::getVoucherById);
+                .andRoute(RequestPredicates.GET("/voucher/{id}"), handler::getVoucherById)
+                .andRoute(RequestPredicates.POST("/voucher/discount"), handler::createVoucherDiscount)
+                .andRoute(RequestPredicates.POST("/voucher/discount"), handler::createVoucherDiscount);
     }
 }

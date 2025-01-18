@@ -1,5 +1,6 @@
 package com.codigo.microservices.voucher.dto;
 
+import com.codigo.microservices.voucher.entity.VoucherDiscount;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoucherDto {
-    private String id;
+    private Long id;
 
     @NotBlank(message = "Title is required")
     private String title;
@@ -33,7 +34,7 @@ public class VoucherDto {
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
     private BigDecimal amount;
 
-    private List<String> voucherDiscounts = new ArrayList<>();
+    private List<VoucherDiscount> voucherDiscounts = new ArrayList<>();
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")

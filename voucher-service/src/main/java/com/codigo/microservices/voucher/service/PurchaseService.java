@@ -31,9 +31,9 @@ public class PurchaseService {
     }
 
     public Mono<PurchaseResponseDto> purchaseVoucher(PurchaseRequestDto purchaseRequestDto) {
-        return this.voucherService.getVoucherById(UUID.fromString(purchaseRequestDto.getVoucherId()))
+        return this.voucherService.getVoucherById(purchaseRequestDto.getVoucherId())
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid eVoucher ID")))
-                .flatMap(voucher -> paymentMethodService.getPaymentMethodById(UUID.fromString(purchaseRequestDto.getPaymentMethodId()))
+                .flatMap(voucher -> paymentMethodService.getPaymentMethodById(purchaseRequestDto.getPaymentMethodId())
                         .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid Payment Method ID")))
                         .flatMap(paymentMethod -> processPurchase(voucher, paymentMethod, purchaseRequestDto.getPhoneNumber(), purchaseRequestDto.getPaymentMetaId(), purchaseRequestDto.getQuantity()))
                 );
@@ -52,17 +52,17 @@ public class PurchaseService {
             return Mono.error(new IllegalStateException("Invalid Payment"));
         }
 
-        GetUnownedPromoCodeRequestDto unownedPromoCodeRequestDto = new GetUnownedPromoCodeRequestDto(voucher.getId().toString(), voucherCount, userPhone);
+        GetUnownedPromoCodeRequestDto unownedPromoCodeRequestDto = new GetUnownedPromoCodeRequestDto(voucher.getId(), voucherCount, userPhone);
 
         return promoCodeClient.getUnownedPromoCodes(unownedPromoCodeRequestDto)
                 .flatMap(promoCodeList -> {
                     PurchaseHistory purchaseHistory = PurchaseHistory.builder()
                             .userPhone(userPhone)
-                            .voucher(voucher)
+                            .voucherId(voucher.getId())
                             .purchaseDate(LocalDateTime.now())
                             .build();
 
-                    return Mono.fromCallable(() -> this.purchaseHistoryRepository.save(purchaseHistory))
+                    return this.purchaseHistoryRepository.save(purchaseHistory)
                             .map(history -> new PurchaseResponseDto("Purchase Successfully!", true, promoCodeList));
                 });
     }

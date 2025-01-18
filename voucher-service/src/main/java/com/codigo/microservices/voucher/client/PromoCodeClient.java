@@ -20,7 +20,7 @@ public class PromoCodeClient {
 
     public Mono<List<PromoCodeDto>> getUnownedPromoCodes(GetUnownedPromoCodeRequestDto getUnownedPromoCodeRequestDto) {
         return webClient.post()
-                .uri("/promo/take")
+                .uri("/internal/promo-code/take")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(getUnownedPromoCodeRequestDto)
                 .retrieve()

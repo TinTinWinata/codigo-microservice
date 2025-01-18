@@ -1,8 +1,11 @@
 package com.codigo.microservices.code.service;
 
 import com.codigo.microservices.code.constant.PropertyConstant;
+import com.codigo.microservices.code.dto.GetPromoCodeStatusDto;
 import com.codigo.microservices.code.dto.GetUnownedPromoCodeRequestDto;
+import com.codigo.microservices.code.dto.UpdatePromoCodeStatusDto;
 import com.codigo.microservices.code.entity.PromoCode;
+import com.codigo.microservices.code.enums.VoucherStatus;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
 import com.codigo.microservices.code.repository.PromoCodeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +48,7 @@ public class PromoCodeService {
 
     private String getNextCode(){
         String promoCode = GenerateCode();
-        while (promoCodeRepository.existsById(promoCode)){
+        while (promoCodeRepository.existsByCode(promoCode)){
             promoCode = GenerateCode();
         }
         return promoCode;
@@ -61,13 +64,34 @@ public class PromoCodeService {
             PromoCode promoCode = PromoCode.builder()
                     .code(generatedCode)
                     .voucherId(voucherId)
-                    .isUsed(false)
+                    .status(VoucherStatus.ACTIVE)
                     .generatedDate(LocalDateTime.now())
                     .qrCode(this.qrCodeService.generateQRCode(generatedCode, "qr-" + generatedCode))
                     .build();
             promoCodeRepository.save(promoCode);
         }
     }
+
+    public Mono<PromoCode> updateStatusPromoCode(UpdatePromoCodeStatusDto updatePromoCodeStatusDto) {
+        return Mono.fromCallable(() -> {
+            PromoCode promoCode = promoCodeRepository.findByCode(updatePromoCodeStatusDto.getCode());
+            promoCode.setStatus(VoucherStatus.USED);
+            return promoCodeRepository.save(promoCode);
+        });
+    }
+
+    public Mono<GetPromoCodeStatusDto> getPromoCodeStatusByCode(String code) {
+        return Mono.fromCallable(() -> {
+                PromoCode promoCode = promoCodeRepository.findByCode(code);
+                GetPromoCodeStatusDto getPromoCodeStatusDto = GetPromoCodeStatusDto
+                        .builder()
+                        .code(code)
+                        .status(promoCode.getStatus().toString())
+                        .build();
+                return getPromoCodeStatusDto;
+        });
+    }
+
 
     public Flux<PromoCode> getUnownedPromoCodes(GetUnownedPromoCodeRequestDto getUnownedPromoCodeRequestDto) {
         return Flux.fromIterable(promoCodeRepository.findByVoucherIdAndOwnerPhoneIsNull(getUnownedPromoCodeRequestDto.getVoucherId()))

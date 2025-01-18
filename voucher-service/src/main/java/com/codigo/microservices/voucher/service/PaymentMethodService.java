@@ -22,11 +22,11 @@ public class PaymentMethodService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    public Mono<PaymentMethod> getPaymentMethodById(UUID id){
-        return Mono.justOrEmpty(paymentMethodRepository.findById(id));
+    public Mono<PaymentMethod> getPaymentMethodById(Long id){
+        return paymentMethodRepository.findById(id);
     }
 
     public Flux<PaymentMethod> getAllPaymentMethods(){
-        return Flux.fromIterable(paymentMethodRepository.findAll());
+        return paymentMethodRepository.findAll();
     }
 }
