@@ -1,9 +1,7 @@
 package com.codigo.microservices.code.service;
 
 import com.codigo.microservices.code.constant.PropertyConstant;
-import com.codigo.microservices.code.dto.GetPromoCodeStatusDto;
-import com.codigo.microservices.code.dto.GetUnownedPromoCodeRequestDto;
-import com.codigo.microservices.code.dto.UpdatePromoCodeStatusDto;
+import com.codigo.microservices.code.dto.*;
 import com.codigo.microservices.code.entity.PromoCode;
 import com.codigo.microservices.code.enums.VoucherStatus;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
@@ -15,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -77,6 +76,23 @@ public class PromoCodeService {
             PromoCode promoCode = promoCodeRepository.findByCode(updatePromoCodeStatusDto.getCode());
             promoCode.setStatus(VoucherStatus.USED);
             return promoCodeRepository.save(promoCode);
+        });
+    }
+
+    public Mono<GetPurchaseHistoryDto> getPurchaseHistoryByPhone(String phoneNumber) {
+        return Mono.fromCallable(() -> {
+            List<PromoCode> promoCodes = promoCodeRepository.findByOwnerPhone(phoneNumber);
+            GetPurchaseHistoryDto purchaseHistoryDto = new GetPurchaseHistoryDto(new ArrayList<UnusedPromoCodeDto>(), new ArrayList<String>());
+            for (PromoCode promoCode : promoCodes) {
+                var status = promoCode.getStatus();
+                if(status == VoucherStatus.ACTIVE){
+                    purchaseHistoryDto.getUnusedPromoCodes().add(UnusedPromoCodeDto.builder().qrCodeImages(promoCode.getQrCode()).promoCode(promoCode.getCode()).build());
+                }
+                if(status == VoucherStatus.USED){
+                    purchaseHistoryDto.getUsedPromoCodes().add(promoCode.getCode());
+                }
+            }
+            return purchaseHistoryDto;
         });
     }
 

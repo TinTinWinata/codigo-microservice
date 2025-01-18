@@ -1,6 +1,7 @@
 package com.codigo.microservices.code.handler;
 
 import com.codigo.microservices.code.dto.GetPromoCodeStatusDto;
+import com.codigo.microservices.code.dto.GetPurchaseHistoryDto;
 import com.codigo.microservices.code.dto.GetUnownedPromoCodeRequestDto;
 import com.codigo.microservices.code.dto.UpdatePromoCodeStatusDto;
 import com.codigo.microservices.code.entity.PromoCode;
@@ -28,6 +29,14 @@ public class PromoCodeHandler {
                 .flatMap(promoCode -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(Mono.just(promoCode), PromoCode.class));
+    }
+
+    public Mono<ServerResponse> getPurchaseHistoryByPhone(ServerRequest request){
+        String phone = request.pathVariable("phone");
+        return promoCodeService.getPurchaseHistoryByPhone(phone)
+                .flatMap(purchaseHistory -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(purchaseHistory), GetPurchaseHistoryDto.class));
     }
 
     public Mono<ServerResponse> getPromoCodeStatusByCode(ServerRequest request){

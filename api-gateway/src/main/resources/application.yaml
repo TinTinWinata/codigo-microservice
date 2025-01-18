@@ -42,4 +42,10 @@ spring:
         - id: promo-code
           uri: http://localhost:8081
           predicates:
-            - Path=/promo-code/**
+            - Path=/api/promo-code/**
+          filters:
+            - RewritePath=/api/promo-code/(?<segment>.*), /promo-code/${segment}
+        - id: qr
+          uri: http://localhost:8081
+          predicates:
+            - Path=/qr/**
