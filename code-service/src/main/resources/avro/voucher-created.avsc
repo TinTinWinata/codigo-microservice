@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "namespace": "com.codigo.microservices.voucher.event",
+  "name": "VoucherCreatedEvent",
+  "fields": [
+    {
+      "name": "voucherId",
+      "type": "string",
+      "doc": "Unique identifier for the voucher"
+    },
+    {
+      "name": "quantity",
+      "type": "int",
+      "doc": "Quantity of vouchers created"
+    }
+  ]
+}
