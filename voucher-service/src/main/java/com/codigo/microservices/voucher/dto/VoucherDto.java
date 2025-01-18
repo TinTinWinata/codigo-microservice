@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,12 +33,7 @@ public class VoucherDto {
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
     private BigDecimal amount;
 
-    @NotBlank(message = "Payment method ID is required")
-    private String paymentMethodId;
-
-    @NotNull(message = "Discount is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Discount cannot be negative")
-    private BigDecimal discount;
+    private List<String> voucherDiscounts = new ArrayList<>();
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")

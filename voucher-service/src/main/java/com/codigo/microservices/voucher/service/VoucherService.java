@@ -1,12 +1,17 @@
 package com.codigo.microservices.voucher.service;
 
+import com.codigo.microservices.voucher.dto.VoucherDiscountDto;
 import com.codigo.microservices.voucher.dto.VoucherDto;
+import com.codigo.microservices.voucher.entity.PaymentMethod;
 import com.codigo.microservices.voucher.entity.Voucher;
+import com.codigo.microservices.voucher.entity.VoucherDiscount;
 import com.codigo.microservices.voucher.enums.VoucherBuyType;
 import com.codigo.microservices.voucher.enums.VoucherStatus;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
 import com.codigo.microservices.voucher.mapper.VoucherMapper;
 import com.codigo.microservices.voucher.repository.PaymentMethodRepository;
+import com.codigo.microservices.voucher.repository.PurchaseHistoryRepository;
+import com.codigo.microservices.voucher.repository.VoucherDiscountRepository;
 import com.codigo.microservices.voucher.repository.VoucherRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,12 +26,14 @@ import java.util.UUID;
 public class VoucherService {
     private final VoucherRepository voucherRepository;
     private final KafkaTemplate<String, VoucherCreatedEvent> kafkaTemplate;
-    private final PaymentMethodRepository paymentMethodRepository;
+    private final PaymentMethodService paymentMethodService;
+    private final VoucherDiscountRepository voucherDiscountRepository;
 
-    public VoucherService(VoucherRepository voucherRepository, KafkaTemplate kafkaTemplate, PaymentMethodRepository paymentMethodRepository) {
+    public VoucherService(VoucherRepository voucherRepository, KafkaTemplate kafkaTemplate, PaymentMethodService paymentMethodService, VoucherDiscountRepository voucherDiscountRepository) {
         this.voucherRepository = voucherRepository;
         this.kafkaTemplate = kafkaTemplate;
-        this.paymentMethodRepository = paymentMethodRepository;
+        this.paymentMethodService = paymentMethodService;
+        this.voucherDiscountRepository = voucherDiscountRepository;
     }
 
     public Flux<VoucherDto> getAllVouchers(){
@@ -41,11 +48,8 @@ public class VoucherService {
     }
 
     public Mono<Voucher> createVoucher(VoucherDto voucherDto){
-        return Mono.fromCallable(() -> paymentMethodRepository.findById(UUID.fromString(voucherDto.getPaymentMethodId()))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid payment method ID")))
-                .map(paymentMethod -> VoucherMapper.toEntity(voucherDto, paymentMethod))
-                .flatMap(voucher -> Mono.fromCallable(() -> voucherRepository.save(voucher)))
-                .doOnSuccess(this::createVoucherEvent);
+        Voucher voucher = VoucherMapper.toEntity(voucherDto);
+        return Mono.just(voucherRepository.save(voucher));
     }
 
     public Mono<Voucher> getVoucherById(UUID id){
@@ -67,10 +71,8 @@ public class VoucherService {
             existingVoucher.setExpiryDate(voucherDto.getExpiryDate());
             existingVoucher.setImageUrl(voucherDto.getImageUrl());
             existingVoucher.setAmount(voucherDto.getAmount());
-            existingVoucher.setDiscount(voucherDto.getDiscount());
             existingVoucher.setQuantity(voucherDto.getQuantity());
             existingVoucher.setBuyType(VoucherBuyType.valueOf(voucherDto.getBuyType()));
-//            existingVoucher.setPaymentMethodId(UUID.fromString(voucherDto.getPaymentMethodId()));
             existingVoucher.setOwnerPhone(voucherDto.getOwnerPhone());
             existingVoucher.setStatus(VoucherStatus.valueOf(voucherDto.getStatus()));
             return Mono.just(voucherRepository.save(existingVoucher));

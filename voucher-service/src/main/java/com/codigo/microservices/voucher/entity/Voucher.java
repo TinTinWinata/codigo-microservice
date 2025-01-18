@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -39,13 +41,6 @@ public class Voucher {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method_id", nullable = false)
-    private PaymentMethod paymentMethod;
-
-    @Column(nullable = false)
-    private BigDecimal discount;
-
     @Column(nullable = false)
     private Integer quantity;
 
@@ -59,4 +54,7 @@ public class Voucher {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VoucherStatus status;
+
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoucherDiscount> voucherDiscounts = new ArrayList<>();
 }

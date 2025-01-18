@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -21,9 +23,6 @@ public class PaymentMethod {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false, name = "discount_description")
-    private String discountDescription;
-
-    @Column(nullable = false)
-    private BigDecimal discount;
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Voucher> discountedVouchers = new ArrayList<>();
 }

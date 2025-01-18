@@ -12,6 +12,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class PaymentMethodRoute {
     @Bean
     public RouterFunction<ServerResponse> paymentMethodRoutes(PaymentMethodHandler handler){
-        return RouterFunctions.route(RequestPredicates.GET("/payment-method"), handler::getAllPaymentMethods);
+        return RouterFunctions.route(RequestPredicates.GET("/payment-method/"), handler::getAllPaymentMethods);
     }
 }

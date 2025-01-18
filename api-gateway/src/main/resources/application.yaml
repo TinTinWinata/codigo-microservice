@@ -21,6 +21,12 @@ spring:
           args:
             name: AuthenticationFilter
       routes:
+        - id: purchase
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/purchase/**
+          filters:
+            - RewritePath=/api/purchase/(?<segment>.*), /purchase/${segment}
         - id: voucher
           uri: http://localhost:8082
           predicates:

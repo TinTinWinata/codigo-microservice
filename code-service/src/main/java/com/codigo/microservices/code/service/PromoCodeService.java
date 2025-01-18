@@ -1,14 +1,18 @@
 package com.codigo.microservices.code.service;
 
 import com.codigo.microservices.code.constant.PropertyConstant;
+import com.codigo.microservices.code.dto.GetUnownedPromoCodeRequestDto;
 import com.codigo.microservices.code.entity.PromoCode;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
 import com.codigo.microservices.code.repository.PromoCodeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -21,7 +25,6 @@ public class PromoCodeService {
         this.qrCodeService = qrCodeService;
         this.promoCodeRepository = promoCodeRepository;
     }
-
 
     private String GenerateCode(){
         StringBuilder promoCode = new StringBuilder();
@@ -66,6 +69,14 @@ public class PromoCodeService {
         }
     }
 
-    public void getPromo(String voucherId, int voucherCount) {
+    public Flux<PromoCode> getUnownedPromoCodes(GetUnownedPromoCodeRequestDto getUnownedPromoCodeRequestDto) {
+        return Flux.fromIterable(promoCodeRepository.findByVoucherIdAndOwnerPhoneIsNull(getUnownedPromoCodeRequestDto.getVoucherId()))
+                .take(getUnownedPromoCodeRequestDto.getVoucherCount())
+                .flatMap(
+                        promoCode -> {
+                            promoCode.setOwnerPhone(getUnownedPromoCodeRequestDto.getPhoneNumber());
+                            return Mono.just(promoCodeRepository.save(promoCode));
+                        }
+                );
     }
 }

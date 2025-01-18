@@ -3,19 +3,27 @@ package com.codigo.microservices.voucher.mapper;
 import com.codigo.microservices.voucher.dto.VoucherDto;
 import com.codigo.microservices.voucher.entity.PaymentMethod;
 import com.codigo.microservices.voucher.entity.Voucher;
+import com.codigo.microservices.voucher.entity.VoucherDiscount;
 import com.codigo.microservices.voucher.enums.VoucherBuyType;
 import com.codigo.microservices.voucher.enums.VoucherStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
 public class VoucherMapper {
-    public static Voucher toEntity(VoucherDto dto, PaymentMethod paymentMethod) {
+    public static Voucher toEntity(VoucherDto dto) {
+        return toEntity(dto, new ArrayList<>());
+    }
+    public static Voucher toEntity(VoucherDto dto, List<VoucherDiscount> voucherDiscounts) {
         Voucher voucher = new Voucher();
         voucher.setTitle(dto.getTitle());
         voucher.setDescription(dto.getDescription());
         voucher.setExpiryDate(dto.getExpiryDate());
         voucher.setImageUrl(dto.getImageUrl());
+        voucher.setVoucherDiscounts(voucherDiscounts);
         voucher.setAmount(dto.getAmount());
-        voucher.setDiscount(dto.getDiscount());
-        voucher.setPaymentMethod(paymentMethod);
         voucher.setQuantity(dto.getQuantity());
         voucher.setBuyType(VoucherBuyType.valueOf(dto.getBuyType()));
         voucher.setOwnerPhone(dto.getOwnerPhone());
@@ -31,8 +39,7 @@ public class VoucherMapper {
         dto.setExpiryDate(voucher.getExpiryDate());
         dto.setImageUrl(voucher.getImageUrl());
         dto.setAmount(voucher.getAmount());
-        dto.setPaymentMethodId(voucher.getPaymentMethod().getId().toString());
-        dto.setDiscount(voucher.getDiscount());
+        dto.setVoucherDiscounts(voucher.getVoucherDiscounts().stream().map(discount -> discount.getId().toString()).collect(Collectors.toList()));
         dto.setQuantity(voucher.getQuantity());
         dto.setBuyType(voucher.getBuyType().toString());
         dto.setOwnerPhone(voucher.getOwnerPhone());
