@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Column;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class VoucherDto {
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
     private BigDecimal amount;
 
-    private List<VoucherDiscount> voucherDiscounts = new ArrayList<>();
+    private List<VoucherDiscount> voucherDiscounts = null;
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
@@ -49,4 +50,9 @@ public class VoucherDto {
 
     @NotBlank(message = "Status is required")
     private String status;
+
+    @NotNull(message = "Max buy limit is required")
+    private int maxBuyLimit;
+
+    private int maxUserLimitFromGift;
 }

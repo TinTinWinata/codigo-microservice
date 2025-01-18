@@ -1,9 +1,9 @@
 package com.codigo.microservices.voucher.service;
 
-import com.codigo.microservices.voucher.dto.VoucherDiscountDto;
-import com.codigo.microservices.voucher.dto.VoucherDto;
+import com.codigo.microservices.voucher.dto.*;
 import com.codigo.microservices.voucher.entity.Voucher;
 import com.codigo.microservices.voucher.entity.VoucherDiscount;
+import com.codigo.microservices.voucher.enums.VoucherBuyType;
 import com.codigo.microservices.voucher.event.VoucherCreatedEvent;
 import com.codigo.microservices.voucher.mapper.VoucherMapper;
 import com.codigo.microservices.voucher.repository.VoucherDiscountRepository;
@@ -14,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,6 +72,36 @@ public class VoucherService {
         return voucherRepository.save(voucher).doOnSuccess(this::createVoucherEvent);
     }
 
+    public Mono<Voucher> updateVoucherStatus(Long voucherId, UpdateVoucherStatusDto updateVoucherStatusDto){
+        return this.getVoucherById(voucherId).flatMap(voucher -> {
+            voucher.setStatus(updateVoucherStatusDto.getVoucherStatus());
+            return voucherRepository.save(voucher);
+        });
+    }
+
+    public Mono<ResponseCheckoutPriceDto> getCheckoutPrice(RequestCheckoutPriceDto requestCheckoutPriceDto) {
+        return this.getVoucherByIdWithDiscount(requestCheckoutPriceDto.getVoucherId())
+                .map(voucherDto -> {
+                    BigDecimal discount = voucherDto.getVoucherDiscounts().stream()
+                            .filter(voucherDiscount -> requestCheckoutPriceDto.getPaymentMethodId().equals(voucherDiscount.getPaymentMethodId()))
+                            .map(VoucherDiscount::getDiscount)
+                            .findFirst()
+                            .orElse(BigDecimal.ZERO);
+
+                    BigDecimal voucherPrice = voucherDto.getAmount();
+                    BigDecimal totalPrice =  voucherPrice.subtract(
+                            voucherPrice.multiply(discount.divide(BigDecimal.valueOf(100)))
+                    ).multiply(requestCheckoutPriceDto.getQuantity());
+
+                    return ResponseCheckoutPriceDto.builder()
+                            .voucherPrice(voucherPrice)
+                            .totalPrice(totalPrice)
+                            .discount(discount)
+                            .build();
+                });
+    }
+
+
     public Mono<Voucher> getVoucherById(Long id){
         return voucherRepository.findById(id);
     }
@@ -92,6 +123,9 @@ public class VoucherService {
             existingVoucher.setAmount(voucherDto.getAmount());
             existingVoucher.setQuantity(voucherDto.getQuantity());
             existingVoucher.setOwnerPhone(voucherDto.getOwnerPhone());
+            existingVoucher.setMaxUserLimitFromGift(voucherDto.getMaxUserLimitFromGift());
+            existingVoucher.setMaxBuyLimit(voucherDto.getMaxBuyLimit());
+            existingVoucher.setBuyType(VoucherBuyType.valueOf(voucherDto.getBuyType()));
             return voucherRepository.save(existingVoucher);
         });
     }

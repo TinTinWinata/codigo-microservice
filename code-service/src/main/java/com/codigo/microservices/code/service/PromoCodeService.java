@@ -115,6 +115,7 @@ public class PromoCodeService {
                 .flatMap(
                         promoCode -> {
                             promoCode.setOwnerPhone(getUnownedPromoCodeRequestDto.getPhoneNumber());
+                            promoCode.setBoughtDate(LocalDateTime.now());
                             return Mono.just(promoCodeRepository.save(promoCode));
                         }
                 );

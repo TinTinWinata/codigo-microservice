@@ -31,10 +31,6 @@ public class PromoCode {
     private String voucherId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "buy_type")
-    private VoucherBuyType buyType;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private VoucherStatus status;
 

@@ -1,7 +1,4 @@
-package com.codigo.microservices.api.gateway.constant;
-
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+package com.codigo.microservices.voucher.constant;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -14,5 +11,4 @@ public class PropertyConstant {
             SECRET_KEY_STRING.getBytes(StandardCharsets.UTF_8),
             "HmacSHA256"
     );
-    public static final long JWT_EXPIRATION_TIME_MS =  24 * 60 * 60 * 1000; // 1 Day
 }

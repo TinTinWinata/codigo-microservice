@@ -23,6 +23,18 @@ public class PurchaseHistory {
     @Column("user_phone")
     private String userPhone;
 
+    @Column("user_name")
+    private String userName;
+
+    @Column("to_phone")
+    private String toPhone;
+
+    @Column("to_name")
+    private String toName;
+
+    @Column("voucher_count")
+    private int voucherCount;
+
     @Column("voucher_id")
     private Long voucherId;
 

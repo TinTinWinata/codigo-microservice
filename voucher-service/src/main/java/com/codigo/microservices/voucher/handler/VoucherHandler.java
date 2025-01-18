@@ -1,18 +1,14 @@
 package com.codigo.microservices.voucher.handler;
 
-import com.codigo.microservices.voucher.RequestUtility;
-import com.codigo.microservices.voucher.dto.VoucherDiscountDto;
-import com.codigo.microservices.voucher.dto.VoucherDto;
+import com.codigo.microservices.voucher.dto.*;
+import com.codigo.microservices.voucher.utility.RequestUtility;
 import com.codigo.microservices.voucher.entity.Voucher;
 import com.codigo.microservices.voucher.service.VoucherService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @Component
 public class VoucherHandler {
@@ -28,6 +24,14 @@ public class VoucherHandler {
                 .flatMap(voucher -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(Mono.just(voucher), Voucher.class));
+    }
+
+    public Mono<ServerResponse> getCheckoutPrice(ServerRequest request) {
+        return request.bodyToMono(RequestCheckoutPriceDto.class)
+                .flatMap(voucherService::getCheckoutPrice)
+                .flatMap(checkoutPrice -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(checkoutPrice), ResponseCheckoutPriceDto.class));
     }
 
     public Mono<ServerResponse> createVoucherDiscount(ServerRequest request) {
@@ -47,6 +51,17 @@ public class VoucherHandler {
                             .contentType(MediaType.APPLICATION_JSON)
                             .body(Mono.just(updatedVoucher), Voucher.class);
                 }));
+    }
+
+    public Mono<ServerResponse> updateVoucherStatus(ServerRequest request){
+        return RequestUtility.extractLong(request, "id")
+                .flatMap(id -> request.bodyToMono(UpdateVoucherStatusDto.class)
+                        .flatMap(updateVoucherStatusDto -> voucherService.updateVoucherStatus(id, updateVoucherStatusDto))
+                        .flatMap(updatedVoucher -> {
+                            return ServerResponse.ok()
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(Mono.just(updatedVoucher), Voucher.class);
+                        }));
     }
 
     public Mono<ServerResponse> deleteVoucher(ServerRequest request){

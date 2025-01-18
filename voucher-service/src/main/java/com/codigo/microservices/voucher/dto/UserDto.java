@@ -1,17 +1,17 @@
 package com.codigo.microservices.voucher.dto;
 
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaseRequestDto {
-    private Long voucherId;
-    private Long paymentMethodId;
-    private int quantity;
-    private String paymentMetaId;
+public class UserDto {
+    private String id;
+    private String name;
     private String phoneNumber;
-    private String userName;
 }

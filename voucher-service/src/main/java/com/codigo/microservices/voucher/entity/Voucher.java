@@ -1,5 +1,7 @@
 package com.codigo.microservices.voucher.entity;
 
+import com.codigo.microservices.voucher.enums.VoucherBuyType;
+import com.codigo.microservices.voucher.enums.VoucherStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,4 +40,16 @@ public class Voucher {
 
     @Column("owner_phone")
     private String ownerPhone;
+
+    @Column("buy_type")
+    private VoucherBuyType buyType;
+
+    @Column("status")
+    private VoucherStatus status;
+
+    @Column("max_buy_limit")
+    private int maxBuyLimit;
+
+    @Column("max_user_limit_from_gift")
+    private int maxUserLimitFromGift;
 }
