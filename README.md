@@ -92,8 +92,9 @@ The system is designed to run in a cloud environment with the following key conf
    git clone <repository-url>
    cd codigo-test
    ```
-2. Build the project:
+2. Go each service and Build the project ex:
    ```bash
+   cd voucher-service
    ./mvnw clean install
    ```
 3. Run Docker Compose to start all services:
