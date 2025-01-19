@@ -49,7 +49,7 @@ public class VoucherHandler {
                 .flatMap(updatedVoucher -> {
                     return ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
-                            .body(Mono.just(updatedVoucher), Voucher.class);
+                            .body(Mono.just(updatedVoucher), VoucherDto.class);
                 }));
     }
 

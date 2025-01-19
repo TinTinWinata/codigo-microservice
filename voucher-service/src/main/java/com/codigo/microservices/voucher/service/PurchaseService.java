@@ -13,13 +13,9 @@ import com.codigo.microservices.voucher.enums.VoucherStatus;
 import com.codigo.microservices.voucher.repository.PurchaseHistoryRepository;
 import com.codigo.microservices.voucher.repository.VoucherRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class PurchaseService {
@@ -43,7 +39,6 @@ public class PurchaseService {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid eVoucher ID")))
                 .flatMap(voucher ->
                         {
-
                             return paymentMethodService.getPaymentMethodById(purchaseRequestDto.getPaymentMethodId())
                                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid Payment Method ID")))
                                 .flatMap(paymentMethod -> processPurchase(voucher, paymentMethod, userDto, purchaseRequestDto));
@@ -67,6 +62,10 @@ public class PurchaseService {
     private Mono<PurchaseResponseDto> processPurchase(Voucher voucher, PaymentMethod paymentMethod, UserDto user, PurchaseRequestDto purchaseRequestDto) {
         if (voucher.getStatus() == VoucherStatus.INACTIVE) {
             return Mono.error(new IllegalStateException("Voucher is inactive"));
+        }
+
+        if(voucher.getQuantity() < purchaseRequestDto.getQuantity()){
+            return Mono.error(new IllegalStateException("No voucher left to purchase!"));
         }
 
         if(voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS && purchaseRequestDto.getPhoneNumber().equals(user.getPhoneNumber())){
@@ -93,8 +92,9 @@ public class PurchaseService {
                     if (purchaseHistories.size() >= voucher.getMaxBuyLimit()) {
                         return Mono.error(new IllegalStateException("You have already purchased the maximum number of eVouchers."));
                     }
-
                     UserDto toUser = checkPurchaseUser(voucher, user, purchaseRequestDto);
+                    voucher.setQuantity(voucher.getQuantity() - purchaseRequestDto.getQuantity());
+                    voucherRepository.save(voucher).subscribe();
 
                     if (voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS) {
                         return purchaseHistoryRepository.findByToPhoneAndVoucherId(toUser.getPhoneNumber(), voucher.getId())
@@ -103,7 +103,6 @@ public class PurchaseService {
                                     if (toPurchaseHistories.size() >= voucher.getMaxUserLimitFromGift()) {
                                         return Mono.error(new IllegalStateException("The person already has the maximum number of eVouchers from gift"));
                                     }
-
                                     return handlePromoCodeAndSaveHistory(voucher, purchaseRequestDto, toUser, user);
                                 });
                     }

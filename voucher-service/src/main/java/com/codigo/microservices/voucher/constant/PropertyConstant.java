@@ -11,4 +11,7 @@ public class PropertyConstant {
             SECRET_KEY_STRING.getBytes(StandardCharsets.UTF_8),
             "HmacSHA256"
     );
+
+    // Redist
+    public static final String REDIS_VOUCHER_KEY = "voucher:";
 }

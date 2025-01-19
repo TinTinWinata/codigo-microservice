@@ -1,0 +1,1270 @@
+{
+	"info": {
+		"_postman_id": "b9da8b1f-3c65-4033-80f8-8e1b007c8578",
+		"name": "Codigo",
+		"description": "Project focuses on developing a scalable and efficient Voucher Management System using a microservices architecture. It includes features such as creating and managing vouchers with pre-generated promo codes and QR codes for enhanced user experience, secured by JWT-based authentication at the API Gateway. The system leverages modern technologies like Spring Framework, Redis for caching, Kafka for asynchronous communication, and R2DBC for non-blocking database operations to handle high concurrency.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34838881"
+	},
+	"item": [
+		{
+			"name": "CMS (Voucher)",
+			"item": [
+				{
+					"name": "Get All Voucher",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/voucher/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "transfer-encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"Voucher Number 2\",\n        \"description\": \"Get 20% off on your next purchase\",\n        \"expiryDate\": [\n            2025,\n            12,\n            31\n        ],\n        \"imageUrl\": \"https://picsum.photos/200\",\n        \"amount\": 50,\n        \"voucherDiscounts\": null,\n        \"quantity\": 3,\n        \"buyType\": \"GIFT_TO_OTHERS\",\n        \"status\": \"ACTIVE\",\n        \"maxBuyLimit\": 1,\n        \"maxUserLimitFromGift\": 1\n    },\n    {\n        \"id\": 2,\n        \"title\": \"Food Voucher 10$\",\n        \"description\": \"Get 10$ off on your next purchase\",\n        \"expiryDate\": [\n            2025,\n            12,\n            31\n        ],\n        \"imageUrl\": \"https://picsum.photos/200\",\n        \"amount\": 50,\n        \"voucherDiscounts\": null,\n        \"quantity\": 3,\n        \"buyType\": \"GIFT_TO_OTHERS\",\n        \"status\": \"ACTIVE\",\n        \"maxBuyLimit\": 1,\n        \"maxUserLimitFromGift\": 1\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Voucher By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/voucher/1",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "385"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Updated Holiday Discount\",\n    \"description\": \"Get 20% off on your next purchase\",\n    \"expiryDate\": [\n        2025,\n        12,\n        31\n    ],\n    \"imageUrl\": \"https://picsum.photos/200\",\n    \"amount\": 50,\n    \"voucherDiscounts\": [\n        {\n            \"id\": 8,\n            \"voucherId\": 1,\n            \"paymentMethodId\": 1,\n            \"discount\": 50,\n            \"discountDescription\": \"50% Off\"\n        }\n    ],\n    \"quantity\": 5,\n    \"buyType\": \"GIFT_TO_OTHERS\",\n    \"status\": \"ACTIVE\",\n    \"maxBuyLimit\": 1,\n    \"maxUserLimitFromGift\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Voucher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Food Voucher 10$\",\r\n    \"description\": \"Get 10$ off on your next purchase\",\r\n    \"expiryDate\": \"2025-12-31\",\r\n    \"imageUrl\": \"https://picsum.photos/200\",\r\n    \"amount\": 50.00,\r\n    \"quantity\": 3,\r\n    \"maxBuyLimit\": 1,\r\n    \"maxUserLimitFromGift\": 1,\r\n    \"buyType\" : \"GIFT_TO_OTHERS\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/voucher/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Food Voucher 10$\",\r\n    \"description\": \"Get 10$ off on your next purchase\",\r\n    \"expiryDate\": \"2025-12-31\",\r\n    \"imageUrl\": \"https://picsum.photos/200\",\r\n    \"amount\": 50.00,\r\n    \"quantity\": 3,\r\n    \"maxBuyLimit\": 1,\r\n    \"maxUserLimitFromGift\": 1,\r\n    \"buyType\" : \"GIFT_TO_OTHERS\"\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "260"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"title\": \"Food Voucher 10$\",\n    \"description\": \"Get 10$ off on your next purchase\",\n    \"expiryDate\": [\n        2025,\n        12,\n        31\n    ],\n    \"imageUrl\": \"https://picsum.photos/200\",\n    \"amount\": 50,\n    \"quantity\": 3,\n    \"buyType\": \"GIFT_TO_OTHERS\",\n    \"status\": null,\n    \"maxBuyLimit\": 1,\n    \"maxUserLimitFromGift\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Voucher Discount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"voucherId\" : 1,\r\n   \"discount\": 50,\r\n   \"paymentMethodId\": 1,\r\n   \"discountDescription\": \"50% Off\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/voucher/discount",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								"discount"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"voucherId\" : 1,\r\n   \"discount\": 50,\r\n   \"paymentMethodId\": 1,\r\n   \"discountDescription\": \"50% Off\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/discount",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										"discount"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "88"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 8,\n    \"voucherId\": 1,\n    \"paymentMethodId\": 1,\n    \"discount\": 50,\n    \"discountDescription\": \"50% Off\"\n}"
+						},
+						{
+							"name": "Payment Method & Voucher not Exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"voucherId\" : 10000,\r\n   \"discount\": 50,\r\n   \"paymentMethodId\": 1,\r\n   \"discountDescription\": \"50% Off\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/voucher/discount",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"voucher",
+										"discount"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "content-length",
+									"value": "98"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Error while saving, please check Payment Method & Voucher is Exists!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Voucher",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Updated Holiday Discount\",\r\n    \"description\": \"Get 20% off on your next purchase\",\r\n    \"expiryDate\": \"2025-12-31\",\r\n    \"imageUrl\": \"https://picsum.photos/200\",\r\n    \"amount\": 50.00,\r\n    \"quantity\": 5,\r\n    \"maxBuyLimit\": 1,\r\n    \"maxUserLimitFromGift\": 1,\r\n    \"buyType\" : \"GIFT_TO_OTHERS\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/voucher/1",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Updated Holiday Discount\",\r\n    \"description\": \"Get 20% off on your next purchase\",\r\n    \"expiryDate\": \"2025-12-31\",\r\n    \"imageUrl\": \"https://picsum.photos/200\",\r\n    \"amount\": 50.00,\r\n    \"quantity\": 5,\r\n    \"maxBuyLimit\": 1,\r\n    \"maxUserLimitFromGift\": 1,\r\n    \"buyType\" : \"GIFT_TO_OTHERS\"\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "272"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Updated Holiday Discount\",\n    \"description\": \"Get 20% off on your next purchase\",\n    \"expiryDate\": [\n        2025,\n        12,\n        31\n    ],\n    \"imageUrl\": \"https://picsum.photos/200\",\n    \"amount\": 50,\n    \"quantity\": 5,\n    \"buyType\": \"GIFT_TO_OTHERS\",\n    \"status\": \"ACTIVE\",\n    \"maxBuyLimit\": 1,\n    \"maxUserLimitFromGift\": 1\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "E Store",
+			"item": [
+				{
+					"name": "Get QR Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/qr/qr-158895NYWLN.png",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"qr",
+								"qr-158895NYWLN.png"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Methods",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/payment-method/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"payment-method",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/payment-method/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"payment-method",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "transfer-encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"VISA\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"MasterCard\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Promo Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/promo-code/history/123",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"promo-code",
+								"history",
+								"123"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/promo-code/history/123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"promo-code",
+										"history",
+										"123"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "119"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"unusedPromoCodes\": [\n        {\n            \"qrCodeImages\": \"qr-158895NYWLN.png\",\n            \"promoCode\": \"158895NYWLN\"\n        }\n    ],\n    \"usedPromoCodes\": [\n        \"779085ENLWV\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Purchase Voucher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"voucherId\": 2,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"{\\n  \\\"type\\\": \\\"VISA\\\",\\n  \\\"paymentReference\\\" : \\\"XXXXXXXXXX\\\",\\n  \\\"amount\\\": 5000\\n}\",\r\n    \"phoneNumber\": \"123\",\r\n    \"userName\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/purchase/voucher",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"purchase",
+								"voucher"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 1,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"{\\n  \\\"type\\\": \\\"VISA\\\",\\n  \\\"paymentReference\\\" : \\\"XXXXXXXXXX\\\",\\n  \\\"amount\\\": 5000\\n}\",\r\n    \"phoneNumber\": \"5123\",\r\n    \"userName\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/purchase/voucher",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"purchase",
+										"voucher"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "292"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Purchase Successfully!\",\n    \"success\": true,\n    \"promoCodes\": [\n        {\n            \"id\": \"3381152f-8d39-4e83-940c-1034be34a4df\",\n            \"code\": \"337949XRPDA\",\n            \"qrCode\": \"qr-337949XRPDA.png\",\n            \"voucherId\": \"1\",\n            \"ownerPhone\": \"5123\",\n            \"generatedDate\": [\n                2025,\n                1,\n                19,\n                8,\n                50,\n                38\n            ],\n            \"boughtDate\": [\n                2025,\n                1,\n                19,\n                13,\n                35,\n                44,\n                140090300\n            ],\n            \"used\": false\n        }\n    ]\n}"
+						},
+						{
+							"name": "Maximum Limit Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 1,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"test\",\r\n    \"phoneNumber\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/purchase/voucher",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"purchase",
+										"voucher"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "59"
+								}
+							],
+							"cookie": [],
+							"body": "You have already purchased the maximum number of eVouchers."
+						},
+						{
+							"name": "Maximum Gifted Limit Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 2,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"test\",\r\n    \"phoneNumber\": \"123\",\r\n    \"userName\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/purchase/voucher",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"purchase",
+										"voucher"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "64"
+								}
+							],
+							"cookie": [],
+							"body": "The person already has the maximum number of eVouchers from gift"
+						},
+						{
+							"name": "Buy Type Not Match Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 2,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"test\",\r\n    \"phoneNumber\": \"123\",\r\n    \"userName\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/purchase/voucher",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"purchase",
+										"voucher"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "64"
+								}
+							],
+							"cookie": [],
+							"body": "This is gift to other voucher type! You cannot buy for yourself!"
+						},
+						{
+							"name": "Service Down Example (Resilience Pattern)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 2,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1,\r\n    \"paymentMetaId\": \"test\",\r\n    \"phoneNumber\": \"123\",\r\n    \"userName\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/purchase/voucher",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"purchase",
+										"voucher"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Service is temporarily unavailable. Please try again later.\",\n    \"success\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Check Checkout Price",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"voucherId\": 1,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/voucher/checkout",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"voucher",
+								"checkout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucherId\": 1,\r\n    \"paymentMethodId\": 1,\r\n    \"quantity\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/voucher/checkout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"voucher",
+										"checkout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totalPrice\": 35,\n    \"discount\": 30,\n    \"voucherPrice\": 50\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Promo Code Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"919748OIXDW\",\r\n    \"status\": \"USED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/promo-code/status",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"promo-code",
+								"status"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"919748OIXDW\",\r\n    \"status\": \"USED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/promo-code/status",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"promo-code",
+										"status"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "216"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"4d8a1dda-9e66-4547-a2e1-09a12e16506d\",\n    \"code\": \"919748OIXDW\",\n    \"qrCode\": \"qr-919748OIXDW.png\",\n    \"voucherId\": \"2\",\n    \"status\": \"USED\",\n    \"ownerPhone\": \"123\",\n    \"generatedDate\": [\n        2025,\n        1,\n        19,\n        8,\n        42,\n        23\n    ],\n    \"boughtDate\": [\n        2025,\n        1,\n        19,\n        8,\n        44,\n        17\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Check Promo Code Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/promo-code/status/779085ENLWV",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"promo-code",
+								"status",
+								"779085ENLWV"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response (Active)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_url}}/promo-code/status/158895NYWLN",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"promo-code",
+										"status",
+										"158895NYWLN"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"158895NYWLN\",\n    \"status\": \"ACTIVE\"\n}"
+						},
+						{
+							"name": "Example Response (Used)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_url}}/promo-code/status/779085ENLWV",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"promo-code",
+										"status",
+										"779085ENLWV"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "38"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"779085ENLWV\",\n    \"status\": \"USED\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Auth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Justine Winata\",\r\n    \"phoneNumber\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Justine Winata\",\r\n    \"phoneNumber\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/auth",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "271"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1MTA4NCwiZXhwIjoxNzM3MzM3NDg0fQ.H2PsUsVTwvMANNGbgZDJrJ4ODcCKXKGTLp17SraBFiM\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Justine Winata\",\r\n    \"phoneNumber\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/refresh?refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1OTg2MCwiZXhwIjoxNzM3ODY0NjYwfQ.xrtTSwk5oOVMf5-35ovxpRMCgkhUfddadUvhPddDvIY",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							],
+							"query": [
+								{
+									"key": "refreshToken",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1OTg2MCwiZXhwIjoxNzM3ODY0NjYwfQ.xrtTSwk5oOVMf5-35ovxpRMCgkhUfddadUvhPddDvIY"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Justine Winata\",\r\n    \"phoneNumber\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url}}/auth/refresh?refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1OTg2MCwiZXhwIjoxNzM3ODY0NjYwfQ.xrtTSwk5oOVMf5-35ovxpRMCgkhUfddadUvhPddDvIY",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"auth",
+										"refresh"
+									],
+									"query": [
+										{
+											"key": "refreshToken",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1OTg2MCwiZXhwIjoxNzM3ODY0NjYwfQ.xrtTSwk5oOVMf5-35ovxpRMCgkhUfddadUvhPddDvIY"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "558"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI2MDI5MSwiZXhwIjoxNzM3MzQ2NjkxfQ.llAbnTodBMMzKSlljdPUlLdJMBYBEiAFU-cmP7u-F8Q\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1OTg2MCwiZXhwIjoxNzM3ODY0NjYwfQ.xrtTSwk5oOVMf5-35ovxpRMCgkhUfddadUvhPddDvIY\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Get Promo Code (Internal API)",
+			"item": [
+				{
+					"name": "Get Unowned Codes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"voucherId\": \"3025ca66-1ae7-4a1d-baa6-fefdd80e9db8\",\r\n    \"voucherCount\": 1,\r\n    \"phoneNumber\": \"087878766892\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8081/promo/take",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8081",
+							"path": [
+								"promo",
+								"take"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Other",
+			"item": [
+				{
+					"name": "Resilience API Health Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/actuator/health",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/actuator/health",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"actuator",
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/vnd.spring-boot.actuator.v3+json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "822"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"UP\",\n    \"components\": {\n        \"db\": {\n            \"status\": \"UP\",\n            \"details\": {\n                \"database\": \"MySQL\",\n                \"validationQuery\": \"isValid()\"\n            }\n        },\n        \"discoveryComposite\": {\n            \"description\": \"Discovery Client not initialized\",\n            \"status\": \"UNKNOWN\",\n            \"components\": {\n                \"discoveryClient\": {\n                    \"description\": \"Discovery Client not initialized\",\n                    \"status\": \"UNKNOWN\"\n                }\n            }\n        },\n        \"diskSpace\": {\n            \"status\": \"UP\",\n            \"details\": {\n                \"total\": 492990099456,\n                \"free\": 130056085504,\n                \"threshold\": 10485760,\n                \"path\": \"C:\\\\WORK\\\\TSP - CODE\\\\codigo-test\\\\api-gateway\\\\.\",\n                \"exists\": true\n            }\n        },\n        \"ping\": {\n            \"status\": \"UP\"\n        },\n        \"reactiveDiscoveryClients\": {\n            \"description\": \"Discovery Client not initialized\",\n            \"status\": \"UNKNOWN\",\n            \"components\": {\n                \"Simple Reactive Discovery Client\": {\n                    \"description\": \"Discovery Client not initialized\",\n                    \"status\": \"UNKNOWN\"\n                }\n            }\n        },\n        \"refreshScope\": {\n            \"status\": \"UP\"\n        },\n        \"ssl\": {\n            \"status\": \"UP\",\n            \"details\": {\n                \"validChains\": [],\n                \"invalidChains\": []\n            }\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiYTY1ZWZiODEtMTI2ZC00ZjllLWE1YTEtMWNjZDIzNmIxNWFhXCIsXCJuYW1lXCI6XCJKdXN0aW5lIFdpbmF0YVwiLFwicGhvbmVOdW1iZXJcIjpcIjEyM1wifSIsImlhdCI6MTczNzI1MTA4NCwiZXhwIjoxNzM3MzM3NDg0fQ.H2PsUsVTwvMANNGbgZDJrJ4ODcCKXKGTLp17SraBFiM",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

@@ -82,6 +82,10 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 3
         minimumNumberOfCalls: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
     instances:
       globalCircuitBreaker:
         baseConfig: default

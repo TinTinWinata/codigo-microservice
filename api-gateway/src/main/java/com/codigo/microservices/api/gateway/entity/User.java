@@ -20,6 +20,6 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(name = "phone_number", nullable = false, unique = true, length = 15)
     private String phoneNumber;
 }

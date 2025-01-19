@@ -1,6 +1,7 @@
 package com.codigo.microservices.voucher.dto;
 
 import com.codigo.microservices.voucher.entity.VoucherDiscount;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class VoucherDto {
     @NotBlank(message = "Description is required")
     private String description;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Expiry date is required")
     private LocalDate expiryDate;
 
