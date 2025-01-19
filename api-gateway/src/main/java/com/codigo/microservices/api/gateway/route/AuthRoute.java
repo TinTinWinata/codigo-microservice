@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class AuthRoute {
     @Bean
     public RouterFunction<ServerResponse> authRoutes(AuthHandler handler){
-        return RouterFunctions.route(RequestPredicates.POST("api/auth"), handler::loginUser);
+        return RouterFunctions.route(RequestPredicates.POST("api/auth"), handler::loginUser)
+                .andRoute(RequestPredicates.GET("api/auth/refresh"), handler::refreshToken);
     }
 }

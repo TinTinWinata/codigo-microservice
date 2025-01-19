@@ -15,4 +15,5 @@ public class PropertyConstant {
             "HmacSHA256"
     );
     public static final long JWT_EXPIRATION_TIME_MS =  24 * 60 * 60 * 1000; // 1 Day
+    public static final long JWT_REFRESH_EXPIRATION_TIME_MS =  24 * 60 * 60 * 1000 * 7; // 7 Day
 }

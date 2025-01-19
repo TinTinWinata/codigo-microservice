@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class JwtUtility {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static String generateToken(User user) {
         try {
             String serializedUser = objectMapper.writeValueAsString(user);
@@ -17,6 +18,20 @@ public class JwtUtility {
                     .setSubject(serializedUser)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + PropertyConstant.JWT_EXPIRATION_TIME_MS))
+                    .signWith(PropertyConstant.JWT_SECRET_KEY)
+                    .compact();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing user object", e);
+        }
+    }
+
+    public static String generateRefreshToken(User user) {
+        try {
+            String serializedUser = objectMapper.writeValueAsString(user);
+            return Jwts.builder()
+                    .setSubject(serializedUser)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + PropertyConstant.JWT_REFRESH_EXPIRATION_TIME_MS))
                     .signWith(PropertyConstant.JWT_SECRET_KEY)
                     .compact();
         } catch (JsonProcessingException e) {
