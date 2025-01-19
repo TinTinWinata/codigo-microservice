@@ -1,5 +1,6 @@
 server:
   port: 8080
+
 spring:
   jpa:
     hibernate:
@@ -27,25 +28,69 @@ spring:
             - Path=/api/purchase/**
           filters:
             - RewritePath=/api/purchase/(?<segment>.*), /purchase/${segment}
+            - name: CircuitBreaker
+              args:
+                name: globalCircuitBreaker
+                fallbackUri: forward:/api/fallback
         - id: voucher
           uri: http://localhost:8082
           predicates:
             - Path=/api/voucher/**
           filters:
             - RewritePath=/api/voucher/(?<segment>.*), /voucher/${segment}
+            - name: CircuitBreaker
+              args:
+                name: globalCircuitBreaker
+                fallbackUri: forward:/api/fallback
         - id: payment-method
           uri: http://localhost:8082
           predicates:
             - Path=/api/payment-method/**
           filters:
             - RewritePath=/api/payment-method/(?<segment>.*), /payment-method/${segment}
+            - name: CircuitBreaker
+              args:
+                name: globalCircuitBreaker
+                fallbackUri: forward:/api/fallback
         - id: promo-code
           uri: http://localhost:8081
           predicates:
             - Path=/api/promo-code/**
           filters:
             - RewritePath=/api/promo-code/(?<segment>.*), /promo-code/${segment}
+            - name: CircuitBreaker
+              args:
+                name: globalCircuitBreaker
+                fallbackUri: forward:/api/fallback
         - id: qr
           uri: http://localhost:8081
           predicates:
             - Path=/qr/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: globalCircuitBreaker
+                fallbackUri: forward:/api/fallback
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        minimumNumberOfCalls: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      globalCircuitBreaker:
+        baseConfig: default
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: resilience4j.circuitbreaker, health, metrics
+  endpoint:
+    health:
+      show-details: always
