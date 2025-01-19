@@ -5,7 +5,6 @@ import com.codigo.microservices.voucher.entity.Voucher;
 import com.codigo.microservices.voucher.entity.VoucherDiscount;
 import com.codigo.microservices.voucher.enums.VoucherBuyType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +17,6 @@ public class VoucherMapper {
         voucher.setImageUrl(dto.getImageUrl());
         voucher.setAmount(dto.getAmount());
         voucher.setQuantity(dto.getQuantity());
-        voucher.setOwnerPhone(dto.getOwnerPhone());
         voucher.setBuyType(VoucherBuyType.valueOf(dto.getBuyType()));
         voucher.setMaxBuyLimit(dto.getMaxBuyLimit());
         voucher.setMaxUserLimitFromGift(dto.getMaxUserLimitFromGift());
@@ -26,7 +24,7 @@ public class VoucherMapper {
     }
 
     public static VoucherDto toDto(Voucher voucher) {
-        return toDto(voucher, new ArrayList<>());
+        return toDto(voucher, null);
     }
 
     public static VoucherDto toDto(Voucher voucher, List<VoucherDiscount> voucherDiscounts) {
@@ -39,7 +37,6 @@ public class VoucherMapper {
         dto.setAmount(voucher.getAmount());
         dto.setVoucherDiscounts(voucherDiscounts);
         dto.setQuantity(voucher.getQuantity());
-        dto.setOwnerPhone(voucher.getOwnerPhone());
         dto.setBuyType(voucher.getBuyType().name());
         dto.setStatus(voucher.getStatus().name());
         dto.setMaxBuyLimit(voucher.getMaxBuyLimit());

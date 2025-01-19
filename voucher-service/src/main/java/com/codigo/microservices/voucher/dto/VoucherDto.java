@@ -44,10 +44,6 @@ public class VoucherDto {
     @NotBlank(message = "Buy type is required")
     private String buyType;
 
-    @Pattern(regexp = "\\d{10,15}", message = "Phone number must be between 10 and 15 digits")
-    @NotBlank(message = "Owner phone is required")
-    private String ownerPhone;
-
     @NotBlank(message = "Status is required")
     private String status;
 

@@ -30,10 +30,6 @@ public class PurchaseHandler
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(purchaseResponse)
                         )
-                )
-                .onErrorResume(e -> ServerResponse.badRequest()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(e.getMessage())
                 );
     }
 

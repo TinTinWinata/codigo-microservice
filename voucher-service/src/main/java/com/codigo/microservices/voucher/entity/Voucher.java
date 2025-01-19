@@ -38,9 +38,6 @@ public class Voucher {
     @Column("quantity")
     private Integer quantity;
 
-    @Column("owner_phone")
-    private String ownerPhone;
-
     @Column("buy_type")
     private VoucherBuyType buyType;
 

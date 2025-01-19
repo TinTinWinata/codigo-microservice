@@ -65,8 +65,16 @@ public class PurchaseService {
         return user;
     }
     private Mono<PurchaseResponseDto> processPurchase(Voucher voucher, PaymentMethod paymentMethod, UserDto user, PurchaseRequestDto purchaseRequestDto) {
-        if(voucher.getStatus() == VoucherStatus.INACTIVE){
+        if (voucher.getStatus() == VoucherStatus.INACTIVE) {
             return Mono.error(new IllegalStateException("Voucher is inactive"));
+        }
+
+        if(voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS && purchaseRequestDto.getPhoneNumber().equals(user.getPhoneNumber())){
+            return Mono.error(new IllegalStateException("This is gift to other voucher type! You cannot buy for yourself!"));
+        }
+
+        if(voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS && purchaseRequestDto.getUserName() == null){
+            return Mono.error(new IllegalArgumentException("Field 'userName' is required for gift voucher."));
         }
 
         boolean paymentSuccessful = checkPayment(paymentMethod, purchaseRequestDto.getPaymentMetaId());
@@ -75,36 +83,52 @@ public class PurchaseService {
             return Mono.error(new IllegalStateException("Invalid Payment"));
         }
 
-        if(voucher.getQuantity() < purchaseRequestDto.getQuantity()){
+        if (voucher.getQuantity() < purchaseRequestDto.getQuantity()) {
             return Mono.error(new IllegalStateException("Invalid Voucher Quantity"));
         }
 
-        List<PurchaseHistory> purchaseHistories = purchaseHistoryRepository.findByUserPhoneAndVoucherId(user.getPhoneNumber(), voucher.getId());
-        if(purchaseHistories.size() > voucher.getMaxBuyLimit()) {
-            return Mono.error(new IllegalStateException("You have already purchased the maximum number of eVouchers."));
-        }
+        return purchaseHistoryRepository.findByUserPhoneAndVoucherId(user.getPhoneNumber(), voucher.getId())
+                .collectList()
+                .flatMap(purchaseHistories -> {
+                    if (purchaseHistories.size() >= voucher.getMaxBuyLimit()) {
+                        return Mono.error(new IllegalStateException("You have already purchased the maximum number of eVouchers."));
+                    }
 
-        UserDto toUser = checkPurchaseUser(voucher, user, purchaseRequestDto);
+                    UserDto toUser = checkPurchaseUser(voucher, user, purchaseRequestDto);
 
-        if(voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS) {
-            List<PurchaseHistory> toPurchaseHistories = purchaseHistoryRepository.findByToPhoneAndVoucherId(toUser.getPhoneNumber(), voucher.getId());
-            if(toPurchaseHistories.size() > voucher.getMaxUserLimitFromGift()) {
-                return Mono.error(new IllegalStateException("The person already has the maximum number of eVouchers from gift"));
-            }
-        }
+                    if (voucher.getBuyType() == VoucherBuyType.GIFT_TO_OTHERS) {
+                        return purchaseHistoryRepository.findByToPhoneAndVoucherId(toUser.getPhoneNumber(), voucher.getId())
+                                .collectList()
+                                .flatMap(toPurchaseHistories -> {
+                                    if (toPurchaseHistories.size() >= voucher.getMaxUserLimitFromGift()) {
+                                        return Mono.error(new IllegalStateException("The person already has the maximum number of eVouchers from gift"));
+                                    }
 
-        GetUnownedPromoCodeRequestDto unownedPromoCodeRequestDto = new GetUnownedPromoCodeRequestDto(voucher.getId(), purchaseRequestDto.getQuantity(), user.getPhoneNumber());
+                                    return handlePromoCodeAndSaveHistory(voucher, purchaseRequestDto, toUser, user);
+                                });
+                    }
+
+                    return handlePromoCodeAndSaveHistory(voucher, purchaseRequestDto, toUser, user);
+                });
+    }
+
+    private Mono<PurchaseResponseDto> handlePromoCodeAndSaveHistory(Voucher voucher, PurchaseRequestDto purchaseRequestDto, UserDto toUser, UserDto currentUser) {
+        GetUnownedPromoCodeRequestDto unownedPromoCodeRequestDto = new GetUnownedPromoCodeRequestDto(
+                voucher.getId(), purchaseRequestDto.getQuantity(), toUser.getPhoneNumber()
+        );
 
         return promoCodeClient.getUnownedPromoCodes(unownedPromoCodeRequestDto)
                 .flatMap(promoCodeList -> {
                     PurchaseHistory purchaseHistory = PurchaseHistory.builder()
-                            .toPhone(user.getPhoneNumber())
-                            .toName(user.getName())
+                            .toPhone(toUser.getPhoneNumber())
+                            .toName(toUser.getName())
+                            .userPhone(currentUser.getPhoneNumber())
+                            .userName(currentUser.getName())
                             .voucherId(voucher.getId())
                             .purchaseDate(LocalDateTime.now())
                             .build();
 
-                    return this.purchaseHistoryRepository.save(purchaseHistory)
+                    return purchaseHistoryRepository.save(purchaseHistory)
                             .map(history -> new PurchaseResponseDto("Purchase Successfully!", true, promoCodeList));
                 });
     }

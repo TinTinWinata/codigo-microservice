@@ -7,7 +7,6 @@ CREATE TABLE vouchers (
     image_url VARCHAR(255),
     amount DECIMAL(10, 2) NOT NULL,
     quantity INT NOT NULL,
-    owner_phone VARCHAR(15),
     buy_type ENUM('MYSELF_ONLY', 'GIFT_TO_OTHERS') NOT NULL,
     status ENUM('ACTIVE', 'INACTIVE') NOT NULL,
     max_buy_limit INT NOT NULL,

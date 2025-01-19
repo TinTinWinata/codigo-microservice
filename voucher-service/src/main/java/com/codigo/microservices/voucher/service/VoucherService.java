@@ -53,7 +53,8 @@ public class VoucherService {
                 .discountDescription(voucherDiscountDto.getDiscountDescription())
                 .build();
 
-        return voucherDiscountRepository.save(voucherDiscount);
+        return voucherDiscountRepository.save(voucherDiscount)
+                .onErrorResume(ex -> Mono.error(new IllegalArgumentException("Error while saving, please check Payment Method & Voucher is Exists!", ex)));
     }
 
     public Mono<VoucherDto> getVoucherByIdWithDiscount(Long voucherId){
@@ -122,7 +123,6 @@ public class VoucherService {
             existingVoucher.setImageUrl(voucherDto.getImageUrl());
             existingVoucher.setAmount(voucherDto.getAmount());
             existingVoucher.setQuantity(voucherDto.getQuantity());
-            existingVoucher.setOwnerPhone(voucherDto.getOwnerPhone());
             existingVoucher.setMaxUserLimitFromGift(voucherDto.getMaxUserLimitFromGift());
             existingVoucher.setMaxBuyLimit(voucherDto.getMaxBuyLimit());
             existingVoucher.setBuyType(VoucherBuyType.valueOf(voucherDto.getBuyType()));
